@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+{% block title %}Target Planner — Smart CGPA Planner{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Look ahead</div>
+<h1>Target CGPA Planner</h1>
+<p class="helper-text" style="text-align:left; margin-top:0;">
+  Current CGPA: <strong style="color:var(--navy); font-family:Helvetica, Arial, sans-serif;">{{ current_cgpa }}</strong>
+  &nbsp;·&nbsp; Credits completed: <strong style="color:var(--navy); font-family:Helvetica, Arial, sans-serif;">{{ completed_credits }}</strong>
+</p>
+
+<div class="card">
+  <h2>Where do you want to end up?</h2>
+  <form method="POST" action="{{ url_for('planner') }}">
+    <label for="target_cgpa">Target CGPA</label>
+    <input type="number" id="target_cgpa" name="target_cgpa" step="0.01" min="0" max="10" required placeholder="e.g. 9.0">
+
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="remaining_semesters">Remaining semesters</label>
+        <input type="number" id="remaining_semesters" name="remaining_semesters" min="1" max="12" required placeholder="e.g. 3">
+      </div>
+      <div style="flex:1;">
+        <label for="credits_per_semester">Avg. credits/semester</label>
+        <input type="number" id="credits_per_semester" name="credits_per_semester" step="0.5" min="1" required placeholder="e.g. 24">
+      </div>
+    </div>
+
+    <button type="submit" class="btn-gold full-width">Calculate Required SGPA</button>
+  </form>
+</div>
+
+{% if result %}
+  <div class="card" style="border-top: 4px solid {{ 'var(--success)' if result.achievable else 'var(--error)' }};">
+    <div class="eyebrow" style="color: {{ 'var(--success)' if result.achievable else 'var(--error)' }};">
+      {{ 'Achievable' if result.achievable else 'Not achievable' }}
+    </div>
+    {% if result.required_sgpa is not none %}
+      <div style="font-size:2.2rem; font-weight:700; color:var(--navy); font-family:Helvetica, Arial, sans-serif;">
+        {{ result.required_sgpa }}
+      </div>
+      <div class="helper-text" style="text-align:left; margin-top:4px;">required average SGPA</div>
+    {% endif %}
+    <p style="font-family:Helvetica, Arial, sans-serif; margin-top:16px; color:var(--ink);">{{ result.message }}</p>
+  </div>
+{% endif %}
+
+{% endblock %}

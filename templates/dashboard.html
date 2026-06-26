@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+{% block title %}Dashboard — Smart CGPA Planner{% endblock %}
+{% block content %}
+
+<div class="eyebrow">Overview</div>
+<h1>{{ user_name }}'s Ledger</h1>
+
+<div class="card" style="display:flex; align-items:center; gap:32px; flex-wrap:wrap;">
+  <svg width="140" height="140" viewBox="0 0 140 140">
+    <circle cx="70" cy="70" r="60" fill="none" stroke="#DCD4C2" stroke-width="12"/>
+    {% set pct = (cgpa / 10) * 100 if cgpa else 0 %}
+    {% set circumference = 2 * 3.14159 * 60 %}
+    <circle cx="70" cy="70" r="60" fill="none" stroke="#C99A3B" stroke-width="12"
+      stroke-dasharray="{{ circumference }}"
+      stroke-dashoffset="{{ circumference - (circumference * pct / 100) }}"
+      stroke-linecap="round"
+      transform="rotate(-90 70 70)"/>
+    <text x="70" y="65" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="28" font-weight="700" fill="#15213B">{{ cgpa }}</text>
+    <text x="70" y="85" text-anchor="middle" font-family="Helvetica Neue, Arial, sans-serif" font-size="11" letter-spacing="1" fill="#6b6b6b">CGPA / 10</text>
+  </svg>
+  <div>
+    <div class="eyebrow">Total credits earned</div>
+    <div style="font-size:1.8rem; color:var(--navy); font-weight:700;">{{ total_credits }}</div>
+    <div class="helper-text" style="margin-top:8px; text-align:left;">
+      across {{ semesters|length }} semester{{ 's' if semesters|length != 1 else '' }}.
+      <a href="{{ url_for('planner') }}">Plan your target CGPA →</a>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+
+<div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+  <h2 style="margin:0;">Semesters</h2>
+</div>
+
+<form method="POST" action="{{ url_for('add_semester') }}" style="display:flex; gap:12px; align-items:flex-end; margin-bottom:24px;">
+  <div style="flex:1;">
+    <label for="semester_number">Add new semester</label>
+    <input type="number" id="semester_number" name="semester_number" min="1" max="12" required placeholder="e.g. 5">
+  </div>
+  <button type="submit" class="btn-outline" style="margin-bottom:1px;">Add Semester</button>
+</form>
+
+{% if semesters %}
+  <table>
+    <thead>
+      <tr>
+        <th>Semester</th>
+        <th>Subjects</th>
+        <th>Credits</th>
+        <th>SGPA</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for sem in semesters %}
+      <tr>
+        <td><strong>Semester {{ sem.semester_number }}</strong></td>
+        <td>{{ sem.subject_count }}</td>
+        <td>{{ sem.total_credits }}</td>
+        <td>{{ sem.sgpa if sem.subject_count > 0 else '—' }}</td>
+        <td style="text-align:right; white-space:nowrap;">
+          <a href="{{ url_for('view_semester', semester_id=sem.id) }}" class="btn-outline" style="padding:6px 12px; font-size:0.72rem;">Open</a>
+          <form method="POST" action="{{ url_for('delete_semester', semester_id=sem.id) }}" style="display:inline;" onsubmit="return confirm('Delete Semester {{ sem.semester_number }} and all its subjects?');">
+            <button type="submit" class="btn-danger">Delete</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="card" style="text-align:center; color:#6b6b6b;">
+    No semesters yet. Add your first semester above to start tracking subjects and grades.
+  </div>
+{% endif %}
+
+{% endblock %}

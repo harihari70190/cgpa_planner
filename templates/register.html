@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% block title %}Create Account — Smart CGPA Planner{% endblock %}
+{% block content %}
+  <div class="eyebrow">Get started</div>
+  <h1>Create your account</h1>
+
+  <form method="POST" action="{{ url_for('register') }}">
+    <label for="name">Full name</label>
+    <input type="text" id="name" name="name" required autofocus placeholder="Jordan Lee">
+
+    <label for="email">Email address</label>
+    <input type="email" id="email" name="email" required placeholder="you@college.edu">
+
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password" required minlength="6" placeholder="At least 6 characters">
+
+    <label for="confirm_password">Confirm password</label>
+    <input type="password" id="confirm_password" name="confirm_password" required minlength="6" placeholder="Re-enter password">
+
+    <button type="submit" class="btn-gold full-width">Create Account</button>
+  </form>
+
+  <div class="helper-text">
+    Already have an account? <a href="{{ url_for('login') }}">Log in</a>
+  </div>
+{% endblock %}

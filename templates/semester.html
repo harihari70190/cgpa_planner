@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+{% block title %}Semester {{ semester.semester_number }} — Smart CGPA Planner{% endblock %}
+{% block content %}
+
+<div class="eyebrow"><a href="{{ url_for('dashboard') }}" style="color:var(--gold); text-decoration:none;">← Dashboard</a></div>
+<h1>Semester {{ semester.semester_number }}</h1>
+<p class="helper-text" style="text-align:left; margin-top:0;">
+  Current SGPA: <strong style="color:var(--navy); font-family:Helvetica, Arial, sans-serif;">{{ semester.sgpa }}</strong>
+</p>
+
+<div class="card">
+  <h2>Add a subject</h2>
+  <form method="POST" action="{{ url_for('add_subject', semester_id=semester.id) }}">
+    <label for="subject_name">Subject name</label>
+    <input type="text" id="subject_name" name="subject_name" required placeholder="e.g. Data Structures">
+
+    <div style="display:flex; gap:16px;">
+      <div style="flex:1;">
+        <label for="credits">Credits</label>
+        <input type="number" id="credits" name="credits" step="0.5" min="0.5" max="10" required placeholder="e.g. 4">
+      </div>
+      <div style="flex:1;">
+        <label for="grade">Grade</label>
+        <select id="grade" name="grade" required>
+          <option value="" disabled selected>Select grade</option>
+          {% for g in grade_options %}
+            <option value="{{ g }}">{{ g }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <button type="submit" class="btn-gold full-width">Add Subject</button>
+  </form>
+</div>
+
+<h2>Subjects this semester</h2>
+{% if subjects %}
+  <table>
+    <thead>
+      <tr>
+        <th>Subject</th>
+        <th>Credits</th>
+        <th>Grade Point</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for subj in subjects %}
+      <tr>
+        <td>{{ subj.subject_name }}</td>
+        <td>{{ subj.credits }}</td>
+        <td>{{ subj.grade_point }}</td>
+        <td style="text-align:right;">
+          <form method="POST" action="{{ url_for('delete_subject', subject_id=subj.id) }}" onsubmit="return confirm('Remove this subject?');">
+            <button type="submit" class="btn-danger">Remove</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <div class="card" style="text-align:center; color:#6b6b6b;">
+    No subjects added yet for this semester.
+  </div>
+{% endif %}
+
+{% endblock %}

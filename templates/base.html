@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Smart CGPA Planner{% endblock %}</title>
+<style>
+  :root {
+    --navy: #15213B;
+    --navy-light: #1F3157;
+    --gold: #C99A3B;
+    --gold-light: #E3C277;
+    --cream: #FAF7F1;
+    --ink: #232323;
+    --line: #DCD4C2;
+    --success: #2F6F4E;
+    --error: #B0432E;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    font-family: 'Iowan Old Style', 'Palatino Linotype', Georgia, serif;
+    background: var(--cream);
+    color: var(--ink);
+  }
+
+  .utility {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    letter-spacing: 0.04em;
+  }
+
+  nav {
+    background: var(--navy);
+    color: var(--cream);
+    padding: 18px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 3px solid var(--gold);
+  }
+
+  nav .brand {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: var(--cream);
+    text-decoration: none;
+  }
+  nav .brand span { color: var(--gold-light); }
+
+  nav .nav-links {
+    display: flex;
+    gap: 24px;
+    align-items: center;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.88rem;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  nav .nav-links a {
+    color: var(--cream);
+    text-decoration: none;
+    opacity: 0.85;
+  }
+  nav .nav-links a:hover { opacity: 1; color: var(--gold-light); }
+
+  .container {
+    max-width: 880px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+  }
+
+  .auth-container {
+    max-width: 420px;
+    margin: 60px auto;
+    padding: 40px 36px;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-top: 4px solid var(--gold);
+  }
+
+  h1 {
+    font-size: 2rem;
+    margin: 0 0 6px;
+    color: var(--navy);
+  }
+  h2 {
+    font-size: 1.3rem;
+    color: var(--navy);
+    margin: 0 0 16px;
+  }
+  .eyebrow {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    font-size: 0.72rem;
+    color: var(--gold);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  label {
+    display: block;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--navy-light);
+    margin-bottom: 6px;
+    margin-top: 16px;
+  }
+
+  input, select {
+    width: 100%;
+    padding: 10px 12px;
+    font-size: 1rem;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    border: 1px solid var(--line);
+    background: var(--cream);
+    color: var(--ink);
+  }
+  input:focus, select:focus {
+    outline: 2px solid var(--gold);
+    outline-offset: 1px;
+  }
+
+  button, .btn {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    font-size: 0.82rem;
+    font-weight: 700;
+    padding: 11px 20px;
+    background: var(--navy);
+    color: var(--cream);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  button:hover, .btn:hover { background: var(--navy-light); }
+  .btn-gold { background: var(--gold); color: var(--navy); }
+  .btn-gold:hover { background: var(--gold-light); }
+  .btn-outline {
+    background: transparent;
+    color: var(--navy);
+    border: 1px solid var(--navy);
+  }
+  .btn-outline:hover { background: var(--navy); color: var(--cream); }
+  .btn-danger { background: transparent; color: var(--error); border: 1px solid var(--error); padding: 6px 12px; font-size: 0.72rem; }
+  .btn-danger:hover { background: var(--error); color: #fff; }
+
+  .full-width { width: 100%; margin-top: 24px; }
+
+  .flash {
+    padding: 12px 16px;
+    margin-bottom: 16px;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.9rem;
+    border-left: 4px solid;
+  }
+  .flash.success { background: #EAF3EC; border-color: var(--success); color: var(--success); }
+  .flash.error { background: #FBEAE6; border-color: var(--error); color: var(--error); }
+
+  .helper-text {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.85rem;
+    color: #6b6b6b;
+    margin-top: 24px;
+    text-align: center;
+  }
+  .helper-text a { color: var(--navy); font-weight: 600; }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 12px;
+  }
+  th {
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    text-transform: uppercase;
+    font-size: 0.72rem;
+    letter-spacing: 0.06em;
+    color: var(--navy-light);
+    text-align: left;
+    padding: 10px 8px;
+    border-bottom: 2px solid var(--navy);
+  }
+  td {
+    padding: 12px 8px;
+    border-bottom: 1px solid var(--line);
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.95rem;
+  }
+
+  .card {
+    background: #fff;
+    border: 1px solid var(--line);
+    padding: 24px;
+    margin-bottom: 24px;
+  }
+
+  .divider {
+    border: none;
+    border-top: 1px solid var(--line);
+    margin: 32px 0;
+  }
+
+  footer {
+    text-align: center;
+    font-family: 'Helvetica Neue', Arial, sans-serif;
+    font-size: 0.78rem;
+    color: #999;
+    padding: 24px;
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="{{ url_for('home') }}" class="brand">CGPA<span>Ledger</span></a>
+  {% if session.get('user_id') %}
+  <div class="nav-links">
+    <a href="{{ url_for('dashboard') }}">Dashboard</a>
+    <a href="{{ url_for('planner') }}">Target Planner</a>
+    <a href="{{ url_for('logout') }}">Log out</a>
+  </div>
+  {% endif %}
+</nav>
+
+<div class="{{ 'auth-container' if request.endpoint in ['login', 'register'] else 'container' }}">
+  {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+      {% for category, message in messages %}
+        <div class="flash {{ category }}">{{ message }}</div>
+      {% endfor %}
+    {% endif %}
+  {% endwith %}
+
+  {% block content %}{% endblock %}
+</div>
+
+<footer>Smart CGPA Planner — built for tracking academic progress, one semester at a time.</footer>
+
+</body>
+</html>
